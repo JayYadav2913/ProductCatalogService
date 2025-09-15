@@ -1,37 +1,71 @@
 package com.example.productcatalogservice_mar2025.services;
 
+import com.example.productcatalogservice_mar2025.clients.FakeStoreApiClient;
 import com.example.productcatalogservice_mar2025.dtos.FakeStoreProductDto;
 import com.example.productcatalogservice_mar2025.models.Category;
 import com.example.productcatalogservice_mar2025.models.Product;
+import jakarta.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RequestCallback;
+import org.springframework.web.client.ResponseExtractor;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class ProductService implements IProductService {
-
     @Autowired
-    private RestTemplateBuilder restTemplateBuilder;
+    private FakeStoreApiClient fakeStoreApiClient;
 
     public List<Product> getAllProducts() {
-        return null;
+        List<Product> products = new ArrayList<>();
+        FakeStoreProductDto[] fakeStoreProductDtos = fakeStoreApiClient.getAllProducts();
+        for (FakeStoreProductDto fakeStoreProductDto : fakeStoreProductDtos) {
+            products.add(from(fakeStoreProductDto));
+        }
+        return products;
     }
 
     public Product getProductById(Long id) {
-        RestTemplate restTemplate = restTemplateBuilder.build();
-        FakeStoreProductDto fakeStoreProductDto=restTemplate.getForEntity("https://fakestoreapi.com/products/{product_id}",
-                FakeStoreProductDto.class,id).getBody();
-        return from(fakeStoreProductDto);
-    }
-
-    public Product addProduct(Product product) {
+        FakeStoreProductDto fakeStoreProductDto = fakeStoreApiClient.getProductById(id);
+        if (fakeStoreProductDto != null) {
+            return from(fakeStoreProductDto);
+        }
         return null;
     }
 
-    private Product from(FakeStoreProductDto fakeStoreProductDto){
+    public Product addProduct(Product product) {
+        FakeStoreProductDto fakeStoreProductDto = from(product);
+        FakeStoreProductDto response = fakeStoreApiClient.addProduct(fakeStoreProductDto);
+        return from(response);
+    }
+
+    public Product replaceProduct(Long id, Product product) {
+        FakeStoreProductDto fakeStoreProductDto = from(product);
+        FakeStoreProductDto response = fakeStoreApiClient.replaceProduct(id, fakeStoreProductDto);
+        return from(response);
+    }
+
+    public Product updateProduct(Long id, Product product) {
+        FakeStoreProductDto fakeStoreProductDto = from(product);
+        FakeStoreProductDto response = fakeStoreApiClient.updateProduct(id, fakeStoreProductDto);
+        return from(response);
+    }
+
+    public void deleteProduct(Long id) {
+        fakeStoreApiClient.deleteProduct(id);
+    }
+
+    // --- Mapping methods ---
+
+    private Product from(FakeStoreProductDto fakeStoreProductDto) {
         Product product = new Product();
         product.setId(fakeStoreProductDto.getId());
         product.setTitle(fakeStoreProductDto.getTitle());
@@ -44,4 +78,16 @@ public class ProductService implements IProductService {
         return product;
     }
 
+    private FakeStoreProductDto from(Product product) {
+        FakeStoreProductDto fakeStoreProductDto = new FakeStoreProductDto();
+        fakeStoreProductDto.setId(product.getId());
+        fakeStoreProductDto.setTitle(product.getTitle());
+        fakeStoreProductDto.setPrice(product.getAmount());
+        fakeStoreProductDto.setDescription(product.getDescription());
+        fakeStoreProductDto.setImage(product.getImageUrl());
+        if (product.getCategory() != null) {
+            fakeStoreProductDto.setCategory(product.getCategory().getName());
+        }
+        return fakeStoreProductDto;
+    }
 }
