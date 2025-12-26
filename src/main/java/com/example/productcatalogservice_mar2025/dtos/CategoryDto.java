@@ -3,18 +3,20 @@ package com.example.productcatalogservice_mar2025.dtos;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 public class CategoryDto {
-    private Long id;
+    private UUID id;
     private String name;
     private String description;
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

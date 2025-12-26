@@ -3,17 +3,19 @@ package com.example.productcatalogservice_mar2025.dtos;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 public class ProductDto {
-    private Long id;
+    private UUID id;
     private String title;
     private String description;
     private Double amount;
     private String imageUrl;
     private CategoryDto category;
 
-    public Long getId() {
+    public UUID getId() {
         return this.id;
     }
 
@@ -37,7 +39,7 @@ public class ProductDto {
         return this.category;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

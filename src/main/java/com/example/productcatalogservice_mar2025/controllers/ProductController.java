@@ -14,15 +14,17 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @RestController
+@RequestMapping("/products")
 public class ProductController {
 
     @Autowired
     private IProductService productService;
 
-    @GetMapping("/products")
+    @GetMapping
     public List<ProductDto> getProducts() {
         List<Product> products = productService.getAllProducts();
         List<ProductDto> productDtos = new ArrayList<>();
@@ -36,35 +38,44 @@ public class ProductController {
         return null;
     }
 
-    @GetMapping("/products/{id}")
-    public ResponseEntity<ProductDto> getProductById(@PathVariable("id") Long id) {
-        try {
-            if (id < 0) {
-                throw new RuntimeException("Product not found");
-            }
-            else if(id == 0) {
-                throw new RuntimeException("Invalid productId");
-            }
+    @GetMapping("/{id}")
+    public ResponseEntity<ProductDto> getProductById(@PathVariable("id") UUID id) {
 
-            Product product = productService.getProductById(id);
-            if (product == null) return null;
-            return new ResponseEntity<>(from(product), HttpStatus.OK);
-        }catch (RuntimeException exception) {
-            //return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
-            throw exception;
-        }
+        Product product = productService.getProductById(id);
+
+        // Convert entity → DTO
+        return ResponseEntity.ok(from(product));
     }
 
-    @PostMapping("/products")
-    public ProductDto createProduct(@RequestBody ProductDto product) {
-        return null;
+    @PostMapping
+    public ResponseEntity<ProductDto> createProduct(@RequestBody ProductDto productDto) {
+        Product response = productService.createProduct(from(productDto));
+        return new ResponseEntity<>(from(response), HttpStatus.CREATED);
     }
 
 
-    @PutMapping("/products/{id}")
-    public ProductDto replaceProduct(@PathVariable("id") Long id, @RequestBody ProductDto productDto) {
-        Product product = productService.replaceProduct(id,from(productDto));
-        return from(product);
+    @PutMapping("/{id}")
+    public ResponseEntity<ProductDto> replaceProduct(
+            @PathVariable UUID id,
+            @RequestBody ProductDto productDto) {
+
+        Product product = productService.replaceProduct(id, from(productDto));
+        return ResponseEntity.ok(from(product));
+    }
+
+    // ✅ UPDATE (PATCH)
+    @PatchMapping("/{id}")
+    public ResponseEntity<ProductDto> updateProduct(@PathVariable("id") UUID id, @RequestBody ProductDto productDto) {
+        Product product = productService.updateProduct(id, from(productDto));
+        return ResponseEntity.ok(from(product));
+    }
+
+
+    // ✅ DELETE
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable("id") UUID id) {
+        productService.deleteProduct(id);
+        return ResponseEntity.noContent().build();
     }
 
     private Product from(ProductDto productDto) {

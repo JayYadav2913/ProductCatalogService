@@ -18,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class ProductService implements IProductService {
@@ -33,6 +34,11 @@ public class ProductService implements IProductService {
         return products;
     }
 
+    @Override
+    public Product getProductById(UUID id) {
+        return null;
+    }
+
     public Product getProductById(Long id) {
         FakeStoreProductDto fakeStoreProductDto = fakeStoreApiClient.getProductById(id);
         if (fakeStoreProductDto != null) {
@@ -41,33 +47,43 @@ public class ProductService implements IProductService {
         return null;
     }
 
-    public Product addProduct(Product product) {
+    public Product createProduct(Product product) {
         FakeStoreProductDto fakeStoreProductDto = from(product);
         FakeStoreProductDto response = fakeStoreApiClient.addProduct(fakeStoreProductDto);
         return from(response);
     }
 
-    public Product replaceProduct(Long id, Product product) {
-        FakeStoreProductDto fakeStoreProductDto = from(product);
-        FakeStoreProductDto response = fakeStoreApiClient.replaceProduct(id, fakeStoreProductDto);
-        return from(response);
+    @Override
+    public Product replaceProduct(UUID id, Product product) {
+        return null;
     }
 
-    public Product updateProduct(Long id, Product product) {
-        FakeStoreProductDto fakeStoreProductDto = from(product);
-        FakeStoreProductDto response = fakeStoreApiClient.updateProduct(id, fakeStoreProductDto);
-        return from(response);
+    @Override
+    public Product updateProduct(UUID id, Product product) {
+        return null;
     }
 
-    public void deleteProduct(Long id) {
-        fakeStoreApiClient.deleteProduct(id);
+//    public Product replaceProduct(Long id, Product product) {
+//        FakeStoreProductDto fakeStoreProductDto = from(product);
+//        FakeStoreProductDto response = fakeStoreApiClient.replaceProduct(id, fakeStoreProductDto);
+//        return from(response);
+//    }
+
+//    public Product updateProduct(Long id, Product product) {
+//        FakeStoreProductDto fakeStoreProductDto = from(product);
+//        FakeStoreProductDto response = fakeStoreApiClient.updateProduct(id, fakeStoreProductDto);
+//        return from(response);
+//    }
+
+    public void deleteProduct(UUID id) {
+//        fakeStoreApiClient.deleteProduct(id);
     }
 
     // --- Mapping methods ---
 
     private Product from(FakeStoreProductDto fakeStoreProductDto) {
         Product product = new Product();
-        product.setId(fakeStoreProductDto.getId());
+       // product.setId(fakeStoreProductDto.getId());
         product.setTitle(fakeStoreProductDto.getTitle());
         product.setDescription(fakeStoreProductDto.getDescription());
         product.setAmount(fakeStoreProductDto.getPrice());
@@ -80,7 +96,7 @@ public class ProductService implements IProductService {
 
     private FakeStoreProductDto from(Product product) {
         FakeStoreProductDto fakeStoreProductDto = new FakeStoreProductDto();
-        fakeStoreProductDto.setId(product.getId());
+       // fakeStoreProductDto.setId(product.getId());
         fakeStoreProductDto.setTitle(product.getTitle());
         fakeStoreProductDto.setPrice(product.getAmount());
         fakeStoreProductDto.setDescription(product.getDescription());
