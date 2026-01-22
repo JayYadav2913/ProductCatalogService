@@ -7,9 +7,13 @@ import com.example.productcatalogservice_mar2025.models.Product;
 import com.example.productcatalogservice_mar2025.services.IProductService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -17,6 +21,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -25,14 +31,22 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(com.example.productcatalogservice_mar2025.exceptions.GlobalExceptionHandler.class)
 class ProductControllerTest {
 
+
+
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private ProductController productController;
 
     @MockitoBean
     private IProductService productService;
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Captor
+    private ArgumentCaptor<UUID> idCaptor;
 
     // =========================
     // GET /products/{id} - 200
@@ -170,4 +184,31 @@ class ProductControllerTest {
         mockMvc.perform(delete("/products/{id}", id))
                 .andExpect(status().isNoContent());
     }
+
+    @Test
+    public void Test_GetProductById_ServiceCalledWithExpectedArguments_RunSuccessfully() {
+        // Arrange
+        UUID productId = UUID.randomUUID();
+        String tokenValue = "test-token";
+
+        Product product = new Product();
+        product.setId(productId);
+        product.setTitle("Nokia");
+
+        when(productService.getProductById(any(UUID.class)))
+                .thenReturn(product);
+
+        // Act
+        ResponseEntity<ProductDto> response =
+                productController.getProductById(productId, tokenValue);
+
+        // Assert
+        verify(productService).getProductById(idCaptor.capture());
+        assertEquals(productId, idCaptor.getValue());
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
 }
+

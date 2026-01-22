@@ -1,6 +1,7 @@
 package com.example.productcatalogservice_mar2025.controllers;
 
 
+import com.example.productcatalogservice_mar2025.commons.AuthCommons;
 import com.example.productcatalogservice_mar2025.dtos.CategoryDto;
 import com.example.productcatalogservice_mar2025.dtos.ProductDto;
 import com.example.productcatalogservice_mar2025.models.Category;
@@ -38,13 +39,18 @@ public class ProductController {
         return null;
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ProductDto> getProductById(@PathVariable("id") UUID id) {
+    @GetMapping("/{id}/{tokenValue}")
+    public ResponseEntity<ProductDto> getProductById(@PathVariable("id") UUID id,@PathVariable("tokenValue")String tokenValue) {
 
-        Product product = productService.getProductById(id);
+        if(AuthCommons.validateToken(tokenValue)) {
+            Product product = productService.getProductById(id);
 
-        // Convert entity → DTO
-        return ResponseEntity.ok(from(product));
+            // Convert entity → DTO
+            return ResponseEntity.ok(from(product));
+
+        }
+
+        else return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     @PostMapping

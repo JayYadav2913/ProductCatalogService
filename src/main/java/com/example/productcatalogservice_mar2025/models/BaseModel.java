@@ -30,37 +30,37 @@ public abstract class BaseModel {
     @Enumerated(EnumType.STRING)
     private State state;
 
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getLastUpdatedAt() {
-        return lastUpdatedAt;
-    }
-
-    public void setLastUpdatedAt(LocalDateTime lastUpdatedAt) {
-        this.lastUpdatedAt = lastUpdatedAt;
-    }
-
-    public State getState() {
-        return state;
-    }
-
-    public void setState(State state) {
-        this.state = state;
-    }
+//    public UUID getId() {
+//        return id;
+//    }
+//
+//    public void setId(UUID id) {
+//        this.id = id;
+//    }
+//
+//    public LocalDateTime getCreatedAt() {
+//        return createdAt;
+//    }
+//
+//    public void setCreatedAt(LocalDateTime createdAt) {
+//        this.createdAt = createdAt;
+//    }
+//
+//    public LocalDateTime getLastUpdatedAt() {
+//        return lastUpdatedAt;
+//    }
+//
+//    public void setLastUpdatedAt(LocalDateTime lastUpdatedAt) {
+//        this.lastUpdatedAt = lastUpdatedAt;
+//    }
+//
+//    public State getState() {
+//        return state;
+//    }
+//
+//    public void setState(State state) {
+//        this.state = state;
+//    }
 
     @PrePersist
     public void onCreate() {
