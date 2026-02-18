@@ -8,15 +8,15 @@ import java.util.UUID;
 @Getter
 @Setter
 public class CategoryDto {
-    private UUID id;
+    private Long id;
     private String name;
     private String description;
 
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

@@ -7,14 +7,18 @@ import com.example.productcatalogservice_mar2025.models.State;
 import com.example.productcatalogservice_mar2025.repos.CategoryRepository;
 import com.example.productcatalogservice_mar2025.repos.ProductRepository;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @Service
-@Primary
+//@Primary
 public class StorageProductService implements IProductService{
 
     private final ProductRepository productRepo;
@@ -23,6 +27,7 @@ public class StorageProductService implements IProductService{
     public StorageProductService(ProductRepository productRepo, CategoryRepository categoryRepo) {
         this.productRepo = productRepo;
         this.categoryRepo = categoryRepo;
+
     }
 
     @Override
@@ -31,7 +36,7 @@ public class StorageProductService implements IProductService{
     }
 
     @Override
-    public Product getProductById(UUID id) {
+    public Product getProductById(Long id) {
         return productRepo.findById(id)
                 .orElseThrow(() ->
                 new ResourceNotFoundException(
@@ -63,7 +68,7 @@ public class StorageProductService implements IProductService{
 
 
     @Override
-    public Product replaceProduct(UUID id, Product product) {
+    public Product replaceProduct(Long id, Product product) {
         // replace = full update (PUT)
         Product existing = productRepo.findById(id)
                 .orElseThrow(() ->
@@ -79,7 +84,7 @@ public class StorageProductService implements IProductService{
 
 
     @Override
-    public Product updateProduct(UUID id, Product product) {
+    public Product updateProduct(Long id, Product product) {
 
         Product existingProduct = productRepo.findById(id)
                 .orElseThrow(() ->
@@ -108,7 +113,7 @@ public class StorageProductService implements IProductService{
 
 
     @Override
-    public void deleteProduct(UUID id) {
+    public void deleteProduct(Long id) {
         Product product = productRepo.findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
@@ -117,6 +122,16 @@ public class StorageProductService implements IProductService{
 
         product.setState(State.DELETED);
         productRepo.save(product);
+    }
+
+    @Override
+    public Page<Product> getProductByTitle(String title, int pageNumber, int pageSize) {
+
+        Sort sort=Sort.by(Sort.Direction.DESC, "amount");
+
+        PageRequest pageRequest=PageRequest.of(pageNumber, pageSize,sort);
+
+        return productRepo.findByTitleContainsIgnoreCase(title,pageRequest);
     }
 
 }

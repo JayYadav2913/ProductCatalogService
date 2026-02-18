@@ -40,11 +40,11 @@ public class ProductControllerMvcTest {
     @Test
     public void TestGetAllProducts_RunSuccessfully() throws Exception {
         Product product = new Product();
-        product.setId(UUID.randomUUID());
+        product.setId(1L);
         product.setTitle("MacBook Pro");
 
         Product product2 = new Product();
-        product2.setId(UUID.randomUUID());
+        product2.setId(1L);
         product2.setTitle("Iphone");
 
         List<Product> productList = new ArrayList<>();
@@ -69,7 +69,7 @@ public class ProductControllerMvcTest {
     public void Test_CreateProduct_RunSuccessfully() throws Exception {
         //Arrange
         Product product = new Product();
-        UUID productId = UUID.randomUUID();
+        Long productId = 1L;
          product.setId(productId);
          product.setTitle("Notebook");
 

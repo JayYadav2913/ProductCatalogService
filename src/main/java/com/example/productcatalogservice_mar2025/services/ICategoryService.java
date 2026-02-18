@@ -7,9 +7,9 @@ import java.util.UUID;
 
 public interface ICategoryService {
     List<Category> getAllCategories();
-    Category getCategoryById(UUID id);
+    Category getCategoryById(Long id);
     Category createCategory(Category category);
-    Category replaceCategory(UUID id, Category category);
-    Category updateCategory(UUID id, Category category);
-    void deleteCategory(UUID id);
+    Category replaceCategory(Long id, Category category);
+    Category updateCategory(Long id, Category category);
+    void deleteCategory(Long id);
 }

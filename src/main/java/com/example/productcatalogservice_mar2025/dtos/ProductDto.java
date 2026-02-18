@@ -10,14 +10,14 @@ import java.util.UUID;
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProductDto {
-    private UUID id;
+    private Long id;
     private String title;
     private String description;
     private Double amount;
     private String imageUrl;
     private CategoryDto category;
 
-    public UUID getId() {
+    public Long getId() {
         return this.id;
     }
 
@@ -41,7 +41,7 @@ public class ProductDto {
         return this.category;
     }
 
-    public void setId(UUID id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

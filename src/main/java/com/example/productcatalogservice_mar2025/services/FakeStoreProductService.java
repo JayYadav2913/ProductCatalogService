@@ -4,26 +4,28 @@ import com.example.productcatalogservice_mar2025.clients.FakeStoreApiClient;
 import com.example.productcatalogservice_mar2025.dtos.FakeStoreProductDto;
 import com.example.productcatalogservice_mar2025.models.Category;
 import com.example.productcatalogservice_mar2025.models.Product;
-import jakarta.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
+import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Page;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RequestCallback;
-import org.springframework.web.client.ResponseExtractor;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Service
-public class ProductService implements IProductService {
+@Primary
+public class FakeStoreProductService implements IProductService {
     @Autowired
     private FakeStoreApiClient fakeStoreApiClient;
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
+
+    public FakeStoreProductService(FakeStoreApiClient fakeStoreApiClient, RedisTemplate<String, Object> redisTemplate) {
+        this.fakeStoreApiClient = fakeStoreApiClient;
+        this.redisTemplate = redisTemplate;
+    }
 
     public List<Product> getAllProducts() {
         List<Product> products = new ArrayList<>();
@@ -34,14 +36,24 @@ public class ProductService implements IProductService {
         return products;
     }
 
-    @Override
-    public Product getProductById(UUID id) {
-        return null;
-    }
 
     public Product getProductById(Long id) {
+
+        //First check if the product with the Id is present in the cache or not.
+        Product product= (Product) redisTemplate.opsForHash().get("PRODUCTS","PRODUCT_"+id);
+
+        if (product != null){
+            //Cache Hit
+            return product;
+        }
+
+        //Cache Miss
         FakeStoreProductDto fakeStoreProductDto = fakeStoreApiClient.getProductById(id);
         if (fakeStoreProductDto != null) {
+
+            //Before returning the product, store it in redis.
+            redisTemplate.opsForHash().put("PRODUCTS","PRODUCT_"+id, from(fakeStoreProductDto));
+
             return from(fakeStoreProductDto);
         }
         return null;
@@ -54,13 +66,18 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public Product replaceProduct(UUID id, Product product) {
+    public Product replaceProduct(Long id, Product product) {
         return null;
     }
 
     @Override
-    public Product updateProduct(UUID id, Product product) {
+    public Product updateProduct(Long id, Product product) {
         return null;
+    }
+
+    @Override
+    public void deleteProduct(Long id) {
+
     }
 
 //    public Product replaceProduct(Long id, Product product) {
@@ -77,6 +94,11 @@ public class ProductService implements IProductService {
 
     public void deleteProduct(UUID id) {
 //        fakeStoreApiClient.deleteProduct(id);
+    }
+
+    @Override
+    public Page<Product> getProductByTitle(String title, int pageNumber, int pageSize) {
+        return null;
     }
 
     // --- Mapping methods ---

@@ -40,11 +40,11 @@ class CategoryControllerTest {
     @Test
     void getAllCategories_success() throws Exception {
         Category c1 = new Category();
-        c1.setId(UUID.randomUUID());
+        c1.setId(1L);
         c1.setName("Electronics");
 
         Category c2 = new Category();
-        c2.setId(UUID.randomUUID());
+        c2.setId(1L);
         c2.setName("Fashion");
 
         when(categoryService.getAllCategories()).thenReturn(List.of(c1, c2));
@@ -71,7 +71,7 @@ class CategoryControllerTest {
     // =========================
     @Test
     void getCategoryById_success() throws Exception {
-        UUID id = UUID.randomUUID();
+        Long id = 1L;
 
         Category category = new Category();
         category.setId(id);
@@ -90,7 +90,7 @@ class CategoryControllerTest {
     // =========================
     @Test
     void getCategoryById_notFound() throws Exception {
-        UUID id = UUID.randomUUID();
+        Long id = 1L;
 
         when(categoryService.getCategoryById(id)).thenReturn(null);
 
@@ -104,7 +104,7 @@ class CategoryControllerTest {
     @Test
     void createCategory_success() throws Exception {
         Category saved = new Category();
-        saved.setId(UUID.randomUUID());
+        saved.setId(1L);
         saved.setName("Books");
 
         when(categoryService.createCategory(any(Category.class)))
@@ -125,7 +125,7 @@ class CategoryControllerTest {
     // =========================
     @Test
     void replaceCategory_success() throws Exception {
-        UUID id = UUID.randomUUID();
+        Long id = 1L;
 
         Category updated = new Category();
         updated.setId(id);
@@ -149,7 +149,7 @@ class CategoryControllerTest {
     // =========================
     @Test
     void replaceCategory_notFound() throws Exception {
-        UUID id = UUID.randomUUID();
+        Long id = 1L;
 
         when(categoryService.replaceCategory(eq(id), any(Category.class)))
                 .thenReturn(null);
@@ -168,7 +168,7 @@ class CategoryControllerTest {
     // =========================
     @Test
     void updateCategory_success() throws Exception {
-        UUID id = UUID.randomUUID();
+        Long id = 1L;
 
         Category updated = new Category();
         updated.setId(id);
@@ -192,7 +192,7 @@ class CategoryControllerTest {
     // =========================
     @Test
     void updateCategory_notFound() throws Exception {
-        UUID id = UUID.randomUUID();
+        Long id = 1L;
 
         when(categoryService.updateCategory(eq(id), any(Category.class)))
                 .thenReturn(null);
@@ -211,7 +211,7 @@ class CategoryControllerTest {
     // =========================
     @Test
     void deleteCategory_success() throws Exception {
-        UUID id = UUID.randomUUID();
+        Long id = 1L;
 
         doNothing().when(categoryService).deleteCategory(id);
 

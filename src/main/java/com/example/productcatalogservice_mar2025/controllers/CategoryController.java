@@ -35,7 +35,7 @@ public class CategoryController {
 
     // ✅ GET category by ID
     @GetMapping("/{id}")
-    public ResponseEntity<CategoryDto> getCategoryById(@PathVariable UUID id) {
+    public ResponseEntity<CategoryDto> getCategoryById(@PathVariable Long id) {
         Category category = categoryService.getCategoryById(id);
         if (category == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -52,7 +52,7 @@ public class CategoryController {
 
     // ✅ REPLACE (PUT)
     @PutMapping("/{id}")
-    public ResponseEntity<CategoryDto> replaceCategory(@PathVariable UUID id, @RequestBody CategoryDto categoryDto) {
+    public ResponseEntity<CategoryDto> replaceCategory(@PathVariable Long id, @RequestBody CategoryDto categoryDto) {
         Category replaced = categoryService.replaceCategory(id, from(categoryDto));
         if (replaced == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -62,7 +62,7 @@ public class CategoryController {
 
     // ✅ UPDATE (PATCH)
     @PatchMapping("/{id}")
-    public ResponseEntity<CategoryDto> updateCategory(@PathVariable UUID id, @RequestBody CategoryDto categoryDto) {
+    public ResponseEntity<CategoryDto> updateCategory(@PathVariable Long id, @RequestBody CategoryDto categoryDto) {
         Category updated = categoryService.updateCategory(id, from(categoryDto));
         if (updated == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -72,7 +72,7 @@ public class CategoryController {
 
     // ✅ DELETE
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCategory(@PathVariable UUID id) {
+    public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
         categoryService.deleteCategory(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

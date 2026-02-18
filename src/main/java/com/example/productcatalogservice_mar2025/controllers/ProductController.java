@@ -9,6 +9,7 @@ import com.example.productcatalogservice_mar2025.models.Product;
 import com.example.productcatalogservice_mar2025.services.IProductService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,18 +40,22 @@ public class ProductController {
         return null;
     }
 
-    @GetMapping("/{id}/{tokenValue}")
-    public ResponseEntity<ProductDto> getProductById(@PathVariable("id") UUID id,@PathVariable("tokenValue")String tokenValue) {
+   // @GetMapping("/{id}/{tokenValue}")
+   @GetMapping("/{id}")
+   public ResponseEntity<ProductDto> getProductById(@PathVariable("id") Long id
+    //        ,@PathVariable("tokenValue")String tokenValue
+    ) {
 
-        if(AuthCommons.validateToken(tokenValue)) {
+       // if(AuthCommons.validateToken(tokenValue)) {
             Product product = productService.getProductById(id);
 
             // Convert entity → DTO
-            return ResponseEntity.ok(from(product));
 
-        }
+        return ResponseEntity.ok(from(product));
 
-        else return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+      //  }
+
+        //else return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     @PostMapping
@@ -62,7 +67,7 @@ public class ProductController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ProductDto> replaceProduct(
-            @PathVariable UUID id,
+            @PathVariable Long id,
             @RequestBody ProductDto productDto) {
 
         Product product = productService.replaceProduct(id, from(productDto));
@@ -71,7 +76,7 @@ public class ProductController {
 
     // ✅ UPDATE (PATCH)
     @PatchMapping("/{id}")
-    public ResponseEntity<ProductDto> updateProduct(@PathVariable("id") UUID id, @RequestBody ProductDto productDto) {
+    public ResponseEntity<ProductDto> updateProduct(@PathVariable("id") Long id, @RequestBody ProductDto productDto) {
         Product product = productService.updateProduct(id, from(productDto));
         return ResponseEntity.ok(from(product));
     }
@@ -79,7 +84,7 @@ public class ProductController {
 
     // ✅ DELETE
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable("id") UUID id) {
+    public ResponseEntity<Void> deleteProduct(@PathVariable("id") Long id) {
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
     }
@@ -122,4 +127,13 @@ public class ProductController {
 //    public ResponseEntity<String> handleExceptions(Exception exception) {
 //        return new ResponseEntity<>("kuch toh phata hai", HttpStatus.BAD_REQUEST);
 //    }
+
+    @GetMapping("/title/{title}/{pageNumber}/{pageSize}")
+    public Page<Product> getProductsByTitle(
+            @PathVariable("title") String title,
+            @PathVariable("pageNumber") int pageNumber,
+            @PathVariable("pageSize") int pageSize) {
+
+        return productService.getProductByTitle(title, pageNumber, pageSize);
+    }
 }

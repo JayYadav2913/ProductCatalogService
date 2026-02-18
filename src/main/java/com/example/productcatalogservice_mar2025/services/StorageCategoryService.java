@@ -22,7 +22,7 @@ public class StorageCategoryService implements ICategoryService {
     }
 
     @Override
-    public Category getCategoryById(UUID id) {
+    public Category getCategoryById(Long id) {
         return categoryRepo.findById(id).orElse(null);
     }
 
@@ -34,7 +34,7 @@ public class StorageCategoryService implements ICategoryService {
 
 
     @Override
-    public Category replaceCategory(UUID id, Category category) {
+    public Category replaceCategory(Long id, Category category) {
         return categoryRepo.findById(id)
                 .map(existing -> {
                     category.setId(id);
@@ -43,7 +43,7 @@ public class StorageCategoryService implements ICategoryService {
     }
 
     @Override
-    public Category updateCategory(UUID id, Category category) {
+    public Category updateCategory(Long id, Category category) {
         return categoryRepo.findById(id)
                 .map(existing -> {
                     if (category.getName() != null) existing.setName(category.getName());
@@ -54,7 +54,7 @@ public class StorageCategoryService implements ICategoryService {
     }
 
     @Override
-    public void deleteCategory(UUID id) {
+    public void deleteCategory(Long id) {
         if (categoryRepo.existsById(id)) {
             categoryRepo.deleteById(id);
         }
