@@ -17,8 +17,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@Service
-//@Primary
+@Service("storageProductService")
 public class StorageProductService implements IProductService{
 
     private final ProductRepository productRepo;

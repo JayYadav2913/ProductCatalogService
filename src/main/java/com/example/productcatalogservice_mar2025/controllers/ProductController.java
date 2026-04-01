@@ -7,12 +7,15 @@ import com.example.productcatalogservice_mar2025.dtos.ProductDto;
 import com.example.productcatalogservice_mar2025.models.Category;
 import com.example.productcatalogservice_mar2025.models.Product;
 import com.example.productcatalogservice_mar2025.services.IProductService;
+import jakarta.persistence.Convert;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +26,14 @@ import java.util.UUID;
 @RequestMapping("/products")
 public class ProductController {
 
-    @Autowired
+
     private IProductService productService;
+    private RestTemplate restTemplate;
+
+    public ProductController(@Qualifier("fakeStoreProductService") IProductService productService, RestTemplate restTemplate) {
+        this.productService = productService;
+        this.restTemplate = restTemplate;
+    }
 
     @GetMapping
     public List<ProductDto> getProducts() {
@@ -40,22 +49,34 @@ public class ProductController {
         return null;
     }
 
-   // @GetMapping("/{id}/{tokenValue}")
+//   @GetMapping("/{id}/{tokenValue}")
    @GetMapping("/{id}")
    public ResponseEntity<ProductDto> getProductById(@PathVariable("id") Long id
-    //        ,@PathVariable("tokenValue")String tokenValue
+   //         ,@PathVariable("tokenValue")String tokenValue
     ) {
+        // make a demo call to user
+       //Instead of hardcoading the url of UserService, we should fetch the list of
+       //IP address of UserService from Service Discovery and then make a call
+       // to UserService in a load ballanced way.
+//       restTemplate.getForEntity(
+//               "http://localhost:9090/users/sample",
+//               Void.class
+//       );
 
-       // if(AuthCommons.validateToken(tokenValue)) {
-            Product product = productService.getProductById(id);
 
-            // Convert entity → DTO
+       Product product = null;
+       ResponseEntity<ProductDto> responseEntity = null;
+//        if(AuthCommons.validateToken(tokenValue)) {
+       product = productService.getProductById(id);
 
-        return ResponseEntity.ok(from(product));
+       // Convert entity → DTO
 
-      //  }
+       responseEntity = new ResponseEntity<>(from(product),HttpStatus.OK);
 
-        //else return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+//        } else
+//       responseEntity =  ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
+       return responseEntity;
     }
 
     @PostMapping

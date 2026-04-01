@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@Service
+@Service("fakeStoreProductService")
 @Primary
 public class FakeStoreProductService implements IProductService {
     @Autowired
